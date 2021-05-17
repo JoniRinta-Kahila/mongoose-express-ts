@@ -2,6 +2,7 @@ import express from 'express';
 import { json } from 'body-parser';
 import mongoose from 'mongoose';
 import { playerRouter } from './routes/player';
+import { trophyRouter } from './routes/trophys';
 import dotenv from 'dotenv';
 import { Server } from 'http';
 
@@ -11,6 +12,7 @@ const app = express();
 app.use(json());
 
 // routes
+app.use(trophyRouter);
 app.use(playerRouter);
 
 // listener
@@ -24,10 +26,11 @@ server.on('listening', () => {
     useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    poolSize: 10,
   }, (err) => {
     console.log(err ? err : 'Connected to database.');
   });
-
+  mongoose.model('Trophy').createIndexes({ 'playerId': 1});
 });
 
 server.on('close', () => {
